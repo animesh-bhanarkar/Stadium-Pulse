@@ -31,15 +31,41 @@ Incident Description: "${description}"
 `;
 
     let aiResult;
-    try {
-        const result = await geminiModel.generateContent({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" }
-        });
-        const text = result.response.text();
-        aiResult = JSON.parse(text);
-    } catch (error) {
-        console.error("Gemini API Error or Parse Error:", error);
+    const MAX_ATTEMPTS = 3;
+    const RETRY_DELAYS_MS = [1000, 2000]; // delay before attempt 2, then attempt 3
+    let lastError;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+            const result = await geminiModel.generateContent({
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            });
+            const text = result.response.text();
+            aiResult = JSON.parse(text);
+            lastError = null;
+            break; // success
+        } catch (error) {
+            lastError = error;
+            const errMsg = error?.message || String(error);
+            const errStatus = error?.status ?? error?.statusCode ?? error?.code ?? 'N/A';
+            let errJson;
+            try { errJson = JSON.stringify(error, Object.getOwnPropertyNames(error), 2); }
+            catch (_) { errJson = String(error); }
+            console.error(`=== Gemini Incident API Error (attempt ${attempt}/${MAX_ATTEMPTS}) ===`);
+            console.error("status/code:", errStatus);
+            console.error("message:", errMsg);
+            console.error("full error object:", errJson);
+            console.error("=================================");
+
+            // Only retry on 503 (model overloaded)
+            if (errStatus !== 503 || attempt === MAX_ATTEMPTS) {
+                return res.status(502).json({ error: 'AI classification failed, please retry' });
+            }
+            // Wait before next attempt
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAYS_MS[attempt - 1]));
+        }
+    }
+    if (lastError) {
         return res.status(502).json({ error: 'AI classification failed, please retry' });
     }
 
