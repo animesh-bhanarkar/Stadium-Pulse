@@ -1,1 +1,2 @@
-# Stadium-Pulse
+# StadiumPulse
+Full README coming soon
