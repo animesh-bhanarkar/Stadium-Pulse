@@ -41,9 +41,9 @@ An AI-powered command center for FIFA World Cup 2026 stadium operations. Submiss
   - LESSON LEARNED: always verify raw terminal output fresh (kill stray node processes, fresh terminal windows) — stale scrollback caused a false-alarm repeat of an already-fixed error.
   - Antigravity's coding-agent model going forward: Claude Sonnet (primary), Claude Opus (reserve for tricky bugs), GPT model (tertiary fallback) — Gemini options unavailable for ~1 week due to Antigravity agent quota.
   - DONE: stale comment fixed, 503 retry-with-backoff added (3 attempts, 1s/2s delays, only retries on 503, logs each attempt), verified working, committed (7e31d40) "Fix stale model comment, add 503 retry-with-backoff", pushed to main. STEP 3 FULLY COMPLETE.
+- [done] Full frontend UI build (Command Center & Fan Guide) with built-in accessibility (focus, contrast, layout, ARIA labels)
 - [pending] Fan-facing widget + real Maps API rerouting built + tested
 - [pending] Security hardening pass (rate limiting, input validation, env vars, generic errors)
-- [pending] Accessibility pass (ARIA, keyboard nav, contrast, plain language)
 - [pending] Mocked automated tests for AI routes (Step 4a)
 - [pending] README written (Security + Accessibility + Testing + Google Services sections named explicitly)
 - [pending] Attempt 1 submitted
@@ -52,11 +52,11 @@ An AI-powered command center for FIFA World Cup 2026 stadium operations. Submiss
 - [pending] Final polish / Attempt 3 (only if needed)
 
 ## Next step
-Step 3 fully complete (both Gemini endpoints working, retry logic in place, 11/11 decisionEngine tests passing).
+Step 3 and Frontend build complete (Command Center & Fan Guide built with full interactive flow, validated via browser testing. 11/11 decisionEngine tests passing).
 
-CURRENT IN-PROGRESS STEP: Full frontend UI build (Command Center dashboard at index.html + Fan Guide at fan.html, shared design system in styles.css) — approved with two additions: (1) accessibility built in from the start (icon/text alongside all color-coding, ARIA labels, keyboard focus states, prefers-reduced-motion, WCAG AA contrast), (2) explicit instruction that Step 4a (mocked AI-route tests) comes right after this frontend build, NOT skipped in favor of jumping to Maps integration.
+CURRENT IN-PROGRESS STEP: Step 4a mocked automated tests for AI routes (`incidents.js` / `chat.js`).
 
-ORDER GOING FORWARD: (1) finish frontend build + verify, (2) Step 4a mocked tests for incidents.js/chat.js, (3) fan-facing Maps API integration (Directions/Distance Matrix), (4) security hardening pass, (5) final accessibility audit, (6) README with named Security/Accessibility/Testing/Google Services sections, (7) Attempt 1 submission.
+ORDER GOING FORWARD: (1) Step 4a mocked tests for incidents.js/chat.js, (2) fan-facing Maps API integration (Directions/Distance Matrix), (3) security hardening pass, (4) final accessibility audit, (5) README with named Security/Accessibility/Testing/Google Services sections, (6) Attempt 1 submission.
 
 LESSON LEARNED: always re-read this file fresh from disk at the start of a session rather than trusting cached context or a summary — file sync issues have happened twice already.
 
