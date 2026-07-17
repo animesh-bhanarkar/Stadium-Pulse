@@ -44,7 +44,7 @@ An AI-powered command center for FIFA World Cup 2026 stadium operations. Submiss
 - [done] Full frontend UI build (Command Center & Fan Guide) with built-in accessibility (focus, contrast, layout, ARIA labels)
 - [pending] Fan-facing widget + real Maps API rerouting built + tested
 - [pending] Security hardening pass (rate limiting, input validation, env vars, generic errors)
-- [pending] Mocked automated tests for AI routes (Step 4a)
+- [done] Mocked automated tests for AI routes (Step 4a) — incidents.test.js (8 tests) + chat.test.js (8 tests), 28/28 total passing, committed (5d60fda) "Add mocked integration tests for incidents and chat API routes (Step 4a)"
 - [pending] README written (Security + Accessibility + Testing + Google Services sections named explicitly)
 - [pending] Attempt 1 submitted
 - [pending] Score analyzed, weak points patched
@@ -52,11 +52,11 @@ An AI-powered command center for FIFA World Cup 2026 stadium operations. Submiss
 - [pending] Final polish / Attempt 3 (only if needed)
 
 ## Next step
-Step 3 and Frontend build complete (Command Center & Fan Guide built with full interactive flow, validated via browser testing. 11/11 decisionEngine tests passing).
+Step 4a complete. Test suite now at 28/28 passing (11 decisionEngine unit tests + 8 incidents API mocked tests + 8 chat API mocked tests) — all committed and pushed.
 
-CURRENT IN-PROGRESS STEP: Step 4a mocked automated tests for AI routes (`incidents.js` / `chat.js`).
+CURRENT IN-PROGRESS STEP: Fan-facing Maps API integration — add a `/api/route` backend endpoint that calls the real Google Maps Directions API and returns walking directions from a fan's current zone to a target location (exit, medical station, etc). Wire this into fan.html so fans can ask for directions and get a real route back.
 
-ORDER GOING FORWARD: (1) Step 4a mocked tests for incidents.js/chat.js, (2) fan-facing Maps API integration (Directions/Distance Matrix), (3) security hardening pass, (4) final accessibility audit, (5) README with named Security/Accessibility/Testing/Google Services sections, (6) Attempt 1 submission.
+ORDER GOING FORWARD: (1) Maps API backend endpoint + fan.html wire-up, (2) security hardening pass (Helmet, stricter input validation review), (3) README with named Security/Accessibility/Testing/Google Services sections, (4) Attempt 1 submission.
 
 LESSON LEARNED: always re-read this file fresh from disk at the start of a session rather than trusting cached context or a summary — file sync issues have happened twice already.
 
