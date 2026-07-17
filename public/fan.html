@@ -3,12 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StadiumPulse Fan Guide - FIFA World Cup 2026 Interactive Fan & Volunteer Support Assistant">
     <title>StadiumPulse Fan Guide</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <h1>StadiumPulse Fan Guide</h1>
-    <p>Server is running</p>
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="header-bar" role="banner">
+        <div class="brand">
+            <div class="brand-logo" aria-hidden="true"></div>
+            <h1 class="brand-title">StadiumPulse Fan Guide</h1>
+        </div>
+        <div class="header-status">
+            <span class="badge-live" aria-live="polite">2026 FIFA World Cup</span>
+            <a href="index.html" class="quick-chip" style="text-decoration: none; margin-left: 15px; display: inline-block;">Command Center (Staff)</a>
+        </div>
+    </header>
+
+    <main id="main-content" class="container" tabindex="-1">
+        <div class="grid-2" style="grid-template-columns: 1fr;">
+            <!-- Main Friendly Fan Assistant Card -->
+            <section class="panel" aria-labelledby="assistant-heading">
+                <h2 id="assistant-heading" class="panel-title">
+                    <span>Tournament Fan Assistant</span>
+                    <span class="badge-live" style="background: var(--accent-green-glow); color: var(--accent-green); border-color: var(--accent-green);">Multilingual AI Support</span>
+                </h2>
+
+                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 15px;">
+                    Welcome to the StadiumPulse guide. Ask our AI Assistant any question about directions, facilities, safety protocols, or ticketing details in your native language.
+                </p>
+
+                <!-- Suggested Quick Queries -->
+                <div class="chip-container" aria-label="Quick suggested questions">
+                    <button class="quick-chip" type="button">🚨 What should I do in an emergency?</button>
+                    <button class="quick-chip" type="button">🏥 Where is the nearest medical station?</button>
+                    <button class="quick-chip" type="button">🔍 How do I report a lost item or child?</button>
+                    <button class="quick-chip" type="button">🎟️ Where can I get ticketing support?</button>
+                </div>
+
+                <!-- Chat Display Box -->
+                <div style="background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); height: 380px; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 16px;">
+                    <div id="fan-chat-messages" class="chat-messages" style="flex: 1; overflow-y: auto;" role="log" aria-live="polite">
+                        <div class="chat-message ai">
+                            Hi! I am StadiumPulse Fan Assistant. How can I help you navigate the stadium today?
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Send Input Area -->
+                <form id="fan-chat-form" class="chat-input-area" style="padding: 0; background: none; border: none;">
+                    <input 
+                        type="text" 
+                        id="fan-chat-input" 
+                        class="chat-input" 
+                        placeholder="Ask your question here..." 
+                        aria-label="Ask assistant a question"
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" class="chat-send-btn" style="padding: 12px 24px;">Send Message</button>
+                </form>
+            </section>
+
+            <!-- Guide Categories Cards Grid -->
+            <section aria-labelledby="quick-info-heading" style="margin-top: 20px;">
+                <h2 id="quick-info-heading" style="font-size: 22px; margin-bottom: 16px;">Quick Guidance Guidelines</h2>
+                
+                <div class="info-cards-grid">
+                    <!-- Card 1 -->
+                    <div class="info-card">
+                        <div>
+                            <h3 class="info-card-title">🚨 Emergency Protocols</h3>
+                            <p class="info-card-text">Learn how to evacuate, find assembly points, and recognize emergency alert instructions.</p>
+                        </div>
+                        <button class="info-card-btn" data-modal="emergency-modal">View Evacuation Plan</button>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="info-card">
+                        <div>
+                            <h3 class="info-card-title">🔍 Lost & Found</h3>
+                            <p class="info-card-text">Report missing luggage, lost kids support stations, or reclaim misplaced personal accessories.</p>
+                        </div>
+                        <button class="info-card-btn" data-modal="lostfound-modal">View Reclamation Details</button>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="info-card">
+                        <div>
+                            <h3 class="info-card-title">🏥 Medical Support</h3>
+                            <p class="info-card-text">Quick access maps for paramedic tents, first-aid locations, and direct distress hotline numbers.</p>
+                        </div>
+                        <button class="info-card-btn" data-modal="medical-modal">View Emergency Centers</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modals Layout Structure -->
+
+    <!-- Emergency Modal -->
+    <div id="emergency-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-emergency-title" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close dialog">&times;</button>
+            <h3 id="modal-emergency-title" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                <span>🚨 Emergency & Evacuation Plan</span>
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                In the event of a stadium-wide evacuation command, stay calm and comply with these instructions:
+            </p>
+            <ul style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <li>Identify the nearest lit emergency green exit sign closest to your row.</li>
+                <li>Do NOT use elevators. Use concrete stairwells and ramps exclusively.</li>
+                <li>Follow guidelines shouted by yellow-vested volunteers and stewards.</li>
+                <li>Proceed directly to designated Zone assembly fields outside gates.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Lost & Found Modal -->
+    <div id="lostfound-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-lost-title" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close dialog">&times;</button>
+            <h3 id="modal-lost-title" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                <span>🔍 Lost & Found Reclamation Center</span>
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                Reclaiming missing belongings or reporting family separation details:
+            </p>
+            <ul style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <li>The Central Guest Relations desk is located at Level 1, Concourse Area (near Sector 104).</li>
+                <li>Missing items are photographed and logged electronically. Reclaim with ticketing/ID proof.</li>
+                <li>For lost children reports: Notify any staff instantly to broadcast local zone descriptions.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Medical support Modal -->
+    <div id="medical-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-medical-title" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close dialog">&times;</button>
+            <h3 id="modal-medical-title" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                <span>🏥 First-Aid & Medical Care Centers</span>
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                First-aid response teams operate stations in the following sectors:
+            </p>
+            <ul style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>Station 1 (North):</strong> Behind Sector 108, Lower Concourse.</li>
+                <li><strong>Station 2 (South):</strong> Behind Sector 132, Lower Concourse.</li>
+                <li><strong>Station 3 (Upper):</strong> Adjacent to Sector 215, Level 2.</li>
+                <li>Paramedics patrol concourses on foot and with carts. Wave them down for rapid aid.</li>
+            </ul>
+        </div>
+    </div>
+
     <script src="js/fan.js"></script>
 </body>
 </html>

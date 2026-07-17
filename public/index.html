@@ -3,12 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StadiumPulse Command Center - FIFA World Cup 2026 Live Operations & AI Triage Dashboard">
     <title>StadiumPulse Command Center</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <h1>StadiumPulse Command Center</h1>
-    <p>Server is running</p>
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="header-bar" role="banner">
+        <div class="brand">
+            <div class="brand-logo" aria-hidden="true"></div>
+            <h1 class="brand-title">StadiumPulse Command Center</h1>
+        </div>
+        <div class="header-status">
+            <span class="badge-live" aria-live="polite">Live Monitoring</span>
+            <a href="fan.html" class="quick-chip" style="text-decoration: none; margin-left: 15px; display: inline-block;">Switch to Fan Guide</a>
+        </div>
+    </header>
+
+    <main id="main-content" class="container" tabindex="-1">
+        <div class="grid-2">
+            <!-- Left Panel: Incident Dispatch & Triage -->
+            <section class="panel" aria-labelledby="incident-report-heading">
+                <h2 id="incident-report-heading" class="panel-title">
+                    <span>New Incident Reporter</span>
+                    <span class="badge-live" style="background: var(--accent-blue-glow); color: var(--accent-blue); border-color: var(--accent-blue);" aria-hidden="true">AI Classification</span>
+                </h2>
+
+                <form id="incident-form" novalidate>
+                    <div class="form-group">
+                        <label for="incident-description" class="form-label">Incident Description (English or multilingual, under 500 chars)</label>
+                        <textarea 
+                            id="incident-description" 
+                            class="form-textarea" 
+                            placeholder="Describe the incident (e.g., 'Smoke smell near Zone A gate 4', 'A child got lost near public restroom at Zone B', 'Medical emergency at row 12 block 105')"
+                            maxlength="500"
+                            required
+                            aria-required="true"
+                        ></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn">
+                        <span>Classify & Triage Incident</span>
+                    </button>
+                </form>
+
+                <!-- Triage AI Result Display Container -->
+                <div id="triage-result-container" class="result-container" style="display: none;" aria-live="assertive">
+                    <h3 class="result-label" style="font-weight: 600; margin-bottom: 8px;">Triage Evaluation Result</h3>
+                    <div id="triage-card" class="result-card">
+                        <div class="result-header">
+                            <div>
+                                <span class="result-label">Priority Level</span>
+                                <div id="result-priority-badge" class="badge-priority">CRITICAL</div>
+                            </div>
+                            <div class="result-priority-score" id="result-score-display">
+                                85<span>/100</span>
+                            </div>
+                        </div>
+
+                        <div class="result-detail-grid">
+                            <div>
+                                <div class="result-label">Incident Type</div>
+                                <div class="result-val" id="result-type">Fire Hazard</div>
+                            </div>
+                            <div>
+                                <div class="result-label">Zone Location</div>
+                                <div class="result-val" id="result-zone">Zone A, Gate 4</div>
+                            </div>
+                            <div>
+                                <div class="result-label">Crowd Level</div>
+                                <div class="result-val" id="result-crowd">Critical</div>
+                            </div>
+                            <div>
+                                <div class="result-label">Reported Urgency</div>
+                                <div class="result-val" id="result-urgency">Critical</div>
+                            </div>
+                        </div>
+
+                        <div class="action-dispatch-block">
+                            <div class="result-label">Recommended Action & Dispatch</div>
+                            <div class="result-val" id="result-action" style="font-weight: 600; margin-top: 4px; color: var(--text-primary);">
+                                Evacuate zone and deploy fire response
+                            </div>
+                            <div style="margin-top: 8px;">
+                                <span class="result-label" style="font-size: 11px;">Resource Assigned:</span>
+                                <span id="result-resource" class="badge-priority badge-moderate" style="margin-left: 6px; padding: 2px 6px; font-size: 11px;">Security Team</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Live Feed Monitoring -->
+            <section class="panel" aria-labelledby="live-feed-heading">
+                <h2 id="live-feed-heading" class="panel-title">
+                    <span>Live Incident Log</span>
+                    <span id="feed-count-badge" class="quick-chip" aria-label="Total active incidents logged: 0">0 Active</span>
+                </h2>
+
+                <div id="feed-empty-state" class="empty-state">
+                    <div class="empty-state-icon" aria-hidden="true">📋</div>
+                    <p>No incidents triaged yet. Logged incidents will appear here.</p>
+                </div>
+
+                <div id="incident-feed-list" class="incident-feed" style="display: none;" role="log" aria-live="polite">
+                    <!-- Dynamic feed items go here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Bottom AI Staff Chat Drawer Component -->
+    <aside class="chat-drawer" id="staff-chat-drawer" aria-labelledby="chat-title" role="complementary">
+        <div class="chat-header" id="chat-header-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="chat-body-content">
+            <span id="chat-title" class="chat-header-title">Staff AI Assistant</span>
+            <button type="button" class="chat-toggle-btn" id="chat-toggle-icon" aria-label="Expand Chat Drawer">▲</button>
+        </div>
+        <div class="chat-body" id="chat-body-content" style="display: none;">
+            <div class="chat-messages" id="chat-messages-container" role="log" aria-live="polite">
+                <div class="chat-message ai">
+                    Hello! I am StadiumPulse Assistant. Ask me operations questions, crowd control policies, or safety protocols.
+                </div>
+            </div>
+            <form id="chat-form" class="chat-input-area">
+                <input 
+                    type="text" 
+                    id="chat-input-field" 
+                    class="chat-input" 
+                    placeholder="Type operations message..." 
+                    aria-label="Staff chat question"
+                    autocomplete="off"
+                    required
+                >
+                <button type="submit" class="chat-send-btn">Send</button>
+            </form>
+        </div>
+    </aside>
+
     <script src="js/dashboard.js"></script>
 </body>
 </html>
