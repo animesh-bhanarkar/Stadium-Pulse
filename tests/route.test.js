@@ -65,12 +65,10 @@ const MOCK_ROUTE = {
     steps: ['Head east on Stadium Dr', 'Turn right toward Medical Tent']
 };
 
-// Valid happy-path body — reused across several tests.
 const VALID_BODY = {
     destinationType: 'medical',
     mobilityNeed: 'none',
-    originLat: 40.8128,
-    originLng: -74.0742
+    zoneId: 'zone_a'
 };
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -82,7 +80,7 @@ test('POST /api/route → 400 when destinationType is missing', async () => {
         const res = await fetch(`${base}/api/route`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mobilityNeed: 'none', originLat: 40.8128, originLng: -74.0742 })
+            body: JSON.stringify({ mobilityNeed: 'none', zoneId: 'zone_a' })
         });
         assert.equal(res.status, 400);
         const body = await res.json();
@@ -97,7 +95,7 @@ test('POST /api/route → 400 when destinationType is invalid', async () => {
         const res = await fetch(`${base}/api/route`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'teleporter', mobilityNeed: 'none', originLat: 40.8128, originLng: -74.0742 })
+            body: JSON.stringify({ destinationType: 'teleporter', mobilityNeed: 'none', zoneId: 'zone_a' })
         });
         assert.equal(res.status, 400);
         const body = await res.json();
@@ -115,7 +113,7 @@ test('POST /api/route → 400 when mobilityNeed is missing', async () => {
         const res = await fetch(`${base}/api/route`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'exit', originLat: 40.8128, originLng: -74.0742 })
+            body: JSON.stringify({ destinationType: 'exit', zoneId: 'zone_a' })
         });
         assert.equal(res.status, 400);
         const body = await res.json();
@@ -130,7 +128,7 @@ test('POST /api/route → 400 when mobilityNeed is invalid', async () => {
         const res = await fetch(`${base}/api/route`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'exit', mobilityNeed: 'crutches', originLat: 40.8128, originLng: -74.0742 })
+            body: JSON.stringify({ destinationType: 'exit', mobilityNeed: 'crutches', zoneId: 'zone_a' })
         });
         assert.equal(res.status, 400);
         const body = await res.json();
@@ -140,15 +138,15 @@ test('POST /api/route → 400 when mobilityNeed is invalid', async () => {
 });
 
 // ════════════════════════════════════════════════════════════════════════════
-// 400 — missing / invalid / out-of-range coordinates
+// 400 — missing / invalid zoneId
 // ════════════════════════════════════════════════════════════════════════════
-test('POST /api/route → 400 when originLat is missing', async () => {
+test('POST /api/route → 400 when zoneId is missing', async () => {
     const app = buildApp(async () => { throw new Error('Should not be called'); });
     await withServer(app, async (base) => {
         const res = await fetch(`${base}/api/route`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'medical', mobilityNeed: 'none', originLng: -74.0742 })
+            body: JSON.stringify({ destinationType: 'medical', mobilityNeed: 'none' })
         });
         assert.equal(res.status, 400);
         const body = await res.json();
@@ -157,47 +155,18 @@ test('POST /api/route → 400 when originLat is missing', async () => {
     cleanupCache();
 });
 
-test('POST /api/route → 400 when originLat is not a number (string)', async () => {
+test('POST /api/route → 400 when zoneId is invalid', async () => {
     const app = buildApp(async () => { throw new Error('Should not be called'); });
     await withServer(app, async (base) => {
         const res = await fetch(`${base}/api/route`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'medical', mobilityNeed: 'none', originLat: '40.8128', originLng: -74.0742 })
+            body: JSON.stringify({ destinationType: 'medical', mobilityNeed: 'none', zoneId: 'unknown_zone' })
         });
         assert.equal(res.status, 400);
         const body = await res.json();
         assert.ok(body.error, 'Error field should be present');
-    });
-    cleanupCache();
-});
-
-test('POST /api/route → 400 when originLat is out of range (> 90)', async () => {
-    const app = buildApp(async () => { throw new Error('Should not be called'); });
-    await withServer(app, async (base) => {
-        const res = await fetch(`${base}/api/route`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'medical', mobilityNeed: 'none', originLat: 95, originLng: -74.0742 })
-        });
-        assert.equal(res.status, 400);
-        const body = await res.json();
-        assert.ok(body.error.includes('originLat'), 'Error should mention originLat');
-    });
-    cleanupCache();
-});
-
-test('POST /api/route → 400 when originLng is out of range (< -180)', async () => {
-    const app = buildApp(async () => { throw new Error('Should not be called'); });
-    await withServer(app, async (base) => {
-        const res = await fetch(`${base}/api/route`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'medical', mobilityNeed: 'none', originLat: 40.8128, originLng: -200 })
-        });
-        assert.equal(res.status, 400);
-        const body = await res.json();
-        assert.ok(body.error.includes('originLng'), 'Error should mention originLng');
+        assert.ok(body.error.includes('zoneId'), 'Error should mention zoneId');
     });
     cleanupCache();
 });
@@ -251,7 +220,7 @@ test('POST /api/route → 200 wheelchair+exit routes to accessible_exit type wit
         const res = await fetch(`${base}/api/route`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destinationType: 'exit', mobilityNeed: 'wheelchair', originLat: 40.8128, originLng: -74.0742 })
+            body: JSON.stringify({ destinationType: 'exit', mobilityNeed: 'wheelchair', zoneId: 'zone_a' })
         });
         assert.equal(res.status, 200);
         const body = await res.json();

@@ -12,6 +12,7 @@ const router = express.Router();
 const rateLimit = require('express-rate-limit');
 const { chooseDestination } = require('../lib/fanRouting');
 const { getWalkingDirections } = require('../lib/mapsClient');
+const { TICKET_ZONES } = require('../lib/stadiumLocations');
 
 const routeLimiter = rateLimit({
     windowMs: 60 * 1000,
@@ -47,22 +48,17 @@ function isRetryable(error) {
 }
 
 router.post('/', routeLimiter, async (req, res) => {
-    const { destinationType, mobilityNeed, originLat, originLng } = req.body;
+    const { destinationType, mobilityNeed, zoneId } = req.body;
 
-    // ── Validate origin coordinates ───────────────────────────────────────────
-    if (originLat === undefined || originLat === null ||
-        originLng === undefined || originLng === null) {
-        return res.status(400).json({ error: 'originLat and originLng are required.' });
+    // ── Validate zoneId ───────────────────────────────────────────
+    if (!zoneId) {
+        return res.status(400).json({ error: 'zoneId is required.' });
     }
-    if (typeof originLat !== 'number' || typeof originLng !== 'number') {
-        return res.status(400).json({ error: 'originLat and originLng must be numbers.' });
+    const zone = TICKET_ZONES[zoneId];
+    if (!zone) {
+        return res.status(400).json({ error: 'Invalid zoneId provided.' });
     }
-    if (originLat < -90 || originLat > 90) {
-        return res.status(400).json({ error: 'originLat must be between -90 and 90.' });
-    }
-    if (originLng < -180 || originLng > 180) {
-        return res.status(400).json({ error: 'originLng must be between -180 and 180.' });
-    }
+    const { lat: originLat, lng: originLng } = zone;
 
     // ── Choose destination (fanRouting.js handles its own validation) ─────────
     let chosenLocation, routingWarning;

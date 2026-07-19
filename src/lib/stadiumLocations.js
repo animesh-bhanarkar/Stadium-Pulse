@@ -109,4 +109,15 @@ const STADIUM_LOCATIONS = [
     }
 ];
 
-module.exports = { STADIUM_LOCATIONS };
+/**
+ * Hardcoded origin coordinates for the zones (inside/near MetLife Stadium).
+ * Single source of truth for both frontend definitions and backend validation.
+ */
+const TICKET_ZONES = {
+    'zone_a': { id: 'zone_a', name: 'Zone A — North Stands', lat: 40.8145, lng: -74.0745 },
+    'zone_b': { id: 'zone_b', name: 'Zone B — South Stands', lat: 40.8125, lng: -74.0745 },
+    'zone_c': { id: 'zone_c', name: 'Zone C — East Stands',  lat: 40.8135, lng: -74.0725 },
+    'zone_d': { id: 'zone_d', name: 'Zone D — West Stands',  lat: 40.8135, lng: -74.0765 }
+};
+
+module.exports = { STADIUM_LOCATIONS, TICKET_ZONES };

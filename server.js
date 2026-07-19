@@ -12,7 +12,9 @@ const routeRouter = require('./src/routes/route');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+const helmet = require('helmet');
 
+app.use(helmet());
 app.use(cors());
 app.use(express.json()); // Need to parse JSON bodies
 app.use(express.static('public'));

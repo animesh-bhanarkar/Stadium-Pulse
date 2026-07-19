@@ -172,14 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const routeBtnText = document.getElementById('route-btn-text');
     const routeBtn = document.getElementById('route-btn');
 
-    // Hardcoded origin coordinates for the zones (inside/near MetLife Stadium)
-    const ZONE_COORDS = {
-        'zone_a': { lat: 40.8145, lng: -74.0745 }, // North Stands
-        'zone_b': { lat: 40.8125, lng: -74.0745 }, // South Stands
-        'zone_c': { lat: 40.8135, lng: -74.0725 }, // East Stands
-        'zone_d': { lat: 40.8135, lng: -74.0765 }  // West Stands
-    };
-
     const DEST_ICONS = {
         'exit': '🚪',
         'accessible_exit': '♿',
@@ -209,8 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const coords = ZONE_COORDS[zoneVal];
-
             // Show loading state
             routeBtn.disabled = true;
             routeBtnText.textContent = 'Finding route...';
@@ -229,8 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({
                         destinationType: destVal,
                         mobilityNeed: mobilityVal,
-                        originLat: coords.lat,
-                        originLng: coords.lng
+                        zoneId: zoneVal
                     })
                 });
 
