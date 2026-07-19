@@ -13,6 +13,7 @@ const rateLimit = require('express-rate-limit');
 const { chooseDestination } = require('../lib/fanRouting');
 const { getWalkingDirections } = require('../lib/mapsClient');
 const { TICKET_ZONES } = require('../lib/stadiumLocations');
+const { retryWithBackoff } = require('../lib/retryWithBackoff');
 
 const routeLimiter = rateLimit({
     windowMs: 60 * 1000,
@@ -72,52 +73,28 @@ router.post('/', routeLimiter, async (req, res) => {
     }
 
     // ── Call Google Maps Directions API with retry-with-backoff ───────────────
-    const MAX_ATTEMPTS = 3;
-    const RETRY_DELAYS_MS = [1000, 2000]; // before attempt 2, before attempt 3
-    let lastError;
-
-    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-        try {
-            const route = await getWalkingDirections(
+    try {
+        const route = await retryWithBackoff(async () => {
+            return await getWalkingDirections(
                 originLat,
                 originLng,
                 chosenLocation.lat,
                 chosenLocation.lng
             );
+        }, {
+            logPrefix: "Maps Route API Error",
+            retryableCheck: isRetryable
+        });
 
-            // ── Success ───────────────────────────────────────────────────────
-            return res.status(200).json({
-                chosenLocation,
-                warning: routingWarning,
-                route
-            });
-
-        } catch (error) {
-            lastError = error;
-            const errMsg = error?.message || String(error);
-            const errStatus = error?.status ?? error?.statusCode ?? error?.code ?? 'N/A';
-            let errJson;
-            try { errJson = JSON.stringify(error, Object.getOwnPropertyNames(error), 2); }
-            catch (_) { errJson = String(error); }
-
-            console.error(`=== Maps Route API Error (attempt ${attempt}/${MAX_ATTEMPTS}) ===`);
-            console.error('status/code:', errStatus);
-            console.error('message:', errMsg);
-            console.error('full error object:', errJson);
-            console.error('=================================');
-
-            // Non-retryable errors: don't waste remaining attempts
-            if (!isRetryable(error) || attempt === MAX_ATTEMPTS) {
-                return res.status(502).json({ error: 'Unable to calculate route, please retry' });
-            }
-
-            // Wait before next attempt
-            await new Promise(resolve => setTimeout(resolve, RETRY_DELAYS_MS[attempt - 1]));
-        }
+        // ── Success ───────────────────────────────────────────────────────
+        return res.status(200).json({
+            chosenLocation,
+            warning: routingWarning,
+            route
+        });
+    } catch (error) {
+        return res.status(502).json({ error: 'Unable to calculate route, please retry' });
     }
-
-    // Exhausted all retries
-    return res.status(502).json({ error: 'Unable to calculate route, please retry' });
 });
 
 module.exports = router;

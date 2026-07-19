@@ -3,6 +3,7 @@ const router = express.Router();
 const rateLimit = require('express-rate-limit');
 const { geminiModel } = require('../lib/geminiClient');
 const { triageIncident } = require('../lib/decisionEngine');
+const { retryWithBackoff } = require('../lib/retryWithBackoff');
 
 const incidentLimiter = rateLimit({
     windowMs: 60 * 1000,
@@ -31,11 +32,8 @@ Incident Description: "${description}"
 `;
 
     let aiResult;
-    const MAX_ATTEMPTS = 3;
-    const RETRY_DELAYS_MS = [1000, 2000]; // delay before attempt 2, then attempt 3
-    let lastError;
-    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-        try {
+    try {
+        aiResult = await retryWithBackoff(async () => {
             const result = await geminiModel.generateContent({
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 generationConfig: { responseMimeType: "application/json" }
@@ -47,31 +45,15 @@ Incident Description: "${description}"
             if (text.startsWith('{') && !text.endsWith('}')) {
                 text += '}';
             }
-            aiResult = JSON.parse(text);
-            lastError = null;
-            break; // success
-        } catch (error) {
-            lastError = error;
-            const errMsg = error?.message || String(error);
-            const errStatus = error?.status ?? error?.statusCode ?? error?.code ?? 'N/A';
-            let errJson;
-            try { errJson = JSON.stringify(error, Object.getOwnPropertyNames(error), 2); }
-            catch (_) { errJson = String(error); }
-            console.error(`=== Gemini Incident API Error (attempt ${attempt}/${MAX_ATTEMPTS}) ===`);
-            console.error("status/code:", errStatus);
-            console.error("message:", errMsg);
-            console.error("full error object:", errJson);
-            console.error("=================================");
-
-            // Only retry on 503 (model overloaded)
-            if (errStatus !== 503 || attempt === MAX_ATTEMPTS) {
-                return res.status(502).json({ error: 'AI classification failed, please retry' });
+            return JSON.parse(text);
+        }, {
+            logPrefix: "Gemini Incident API Error",
+            retryableCheck: (error) => {
+                const errStatus = error?.status ?? error?.statusCode ?? error?.code ?? 'N/A';
+                return errStatus === 503;
             }
-            // Wait before next attempt
-            await new Promise(resolve => setTimeout(resolve, RETRY_DELAYS_MS[attempt - 1]));
-        }
-    }
-    if (lastError) {
+        });
+    } catch (error) {
         return res.status(502).json({ error: 'AI classification failed, please retry' });
     }
 
