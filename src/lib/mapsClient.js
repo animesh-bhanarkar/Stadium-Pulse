@@ -18,7 +18,13 @@ if (!MAPS_API_KEY) {
  * @returns {string} Plain-text instruction.
  */
 function stripHtml(html) {
-    return html.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim();
+    // Replace each tag with a space (so adjacent text fragments don't merge),
+    // then collapse any run of whitespace down to a single space, and trim.
+    return html
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
 }
 
 /**
