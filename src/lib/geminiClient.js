@@ -7,8 +7,8 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// Export a model instance. Model: gemini-2.5-flash
-const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+// Export a model instance. Model: gemini-3.5-flash
+const geminiModel = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
 module.exports = {
     genAI,

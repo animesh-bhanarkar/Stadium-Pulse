@@ -40,7 +40,13 @@ Incident Description: "${description}"
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 generationConfig: { responseMimeType: "application/json" }
             });
-            const text = result.response.text();
+            let text = result.response.text().trim();
+            // Clean up markdown fences if present
+            text = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '').trim();
+            // The gemini-3.5-flash model occasionally omits the closing brace when responseMimeType is used
+            if (text.startsWith('{') && !text.endsWith('}')) {
+                text += '}';
+            }
             aiResult = JSON.parse(text);
             lastError = null;
             break; // success
