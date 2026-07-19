@@ -4,6 +4,8 @@
 
 StadiumPulse turns real-time crowd and incident signals into prioritized action plans for stadium staff, and instant, accessible, personalized guidance for fans — powered by the same underlying decision intelligence.
 
+**🔗 Live Demo:** https://stadiumpulse-597315970831.us-central1.run.app (Command Center: `/index.html` · Fan Guide: `/fan.html`)
+
 ---
 
 ## Chosen Vertical
@@ -48,7 +50,7 @@ Google Gemini API (gemini-2.5-flash) + Google Maps Directions API
 - **Fan Guide** (`public/fan.html`) — zone/destination/accessibility-need selector producing real walking directions, plus a fan-facing conversational assistant with quick-question chips.
 
 ### Tech stack
-Node.js + Express backend, vanilla HTML/CSS/JS frontend (no framework overhead, keeps the repo small), Google Gemini API (`@google/generative-ai`), Google Maps Directions API (via native `fetch`, no extra SDK dependency), `helmet` for HTTP security headers, `express-rate-limit` for abuse protection, Node's built-in `node:test` runner for all automated tests (no test framework dependency).
+Node.js + Express backend, vanilla HTML/CSS/JS frontend (no framework overhead, keeps the repo small), Google Gemini API (`@google/generative-ai`), Google Maps Directions API (via native `fetch`, no extra SDK dependency), `helmet` for HTTP security headers, `express-rate-limit` for abuse protection, Node's built-in `node:test` runner for all automated tests (no test framework dependency). Retry-with-backoff logic for external API calls is centralized in a single shared utility (`src/lib/retryWithBackoff.js`) rather than duplicated per-route, keeping the codebase DRY.
 
 ### Running locally
 ```bash
