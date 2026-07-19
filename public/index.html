@@ -117,17 +117,22 @@
 
     <!-- Bottom AI Staff Chat Drawer Component -->
     <aside class="chat-drawer" id="staff-chat-drawer" aria-labelledby="chat-title" role="complementary">
-        <div class="chat-header" id="chat-header-toggle" tabindex="0" role="button" aria-expanded="false" aria-controls="chat-body-content">
+        <div class="chat-header" id="chat-header-toggle">
             <span id="chat-title" class="chat-header-title">Staff AI Assistant</span>
-            <button type="button" class="chat-toggle-btn" id="chat-toggle-icon" aria-label="Expand Chat Drawer">▲</button>
+            <button type="button" class="chat-toggle-btn" id="chat-toggle-icon"
+                aria-label="Expand Chat Drawer"
+                aria-expanded="false"
+                aria-controls="chat-body-content"
+            >▲</button>
         </div>
         <div class="chat-body" id="chat-body-content" style="display: none;">
-            <div class="chat-messages" id="chat-messages-container" role="log" aria-live="polite">
+            <div class="chat-messages" id="chat-messages-container" role="log" aria-live="polite" aria-label="Staff chat conversation">
                 <div class="chat-message ai">
                     Hello! I am StadiumPulse Assistant. Ask me operations questions, crowd control policies, or safety protocols.
                 </div>
             </div>
             <form id="chat-form" class="chat-input-area">
+                <label for="chat-input-field" class="sr-only">Chat message</label>
                 <input 
                     type="text" 
                     id="chat-input-field" 
@@ -137,7 +142,7 @@
                     autocomplete="off"
                     required
                 >
-                <button type="submit" class="chat-send-btn">Send</button>
+                <button type="submit" class="chat-send-btn" aria-label="Send chat message">Send</button>
             </form>
         </div>
     </aside>

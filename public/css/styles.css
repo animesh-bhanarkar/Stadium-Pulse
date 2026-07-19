@@ -7,8 +7,8 @@
     --bg-secondary: #121829;
     --bg-tertiary: #1b233d;
     --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-secondary: #a8b8cc;
+    --text-muted: #8899b0;
     --accent-blue: #3b82f6;
     --accent-blue-glow: rgba(59, 130, 246, 0.15);
     --accent-green: #10b981;
@@ -214,7 +214,8 @@ h1, h2, h3, h4 {
 
 .form-textarea:focus {
     border-color: var(--border-focus);
-    outline: none;
+    outline: 3px solid var(--border-focus);
+    outline-offset: 1px;
 }
 
 .btn {
@@ -481,6 +482,12 @@ h1, h2, h3, h4 {
     color: var(--text-primary);
     cursor: pointer;
     font-size: 16px;
+    border-radius: 4px;
+}
+
+.chat-toggle-btn:focus-visible {
+    outline: 3px solid var(--border-focus);
+    outline-offset: 2px;
 }
 
 .chat-body {
@@ -544,7 +551,8 @@ h1, h2, h3, h4 {
 
 .chat-input:focus {
     border-color: var(--border-focus);
-    outline: none;
+    outline: 3px solid var(--border-focus);
+    outline-offset: 1px;
 }
 
 .chat-send-btn {
@@ -559,6 +567,11 @@ h1, h2, h3, h4 {
 
 .chat-send-btn:hover {
     background-color: #2563eb;
+}
+
+.chat-send-btn:focus-visible {
+    outline: 3px solid var(--border-focus);
+    outline-offset: 2px;
 }
 
 /* Typing Indicator */
@@ -763,7 +776,8 @@ h1, h2, h3, h4 {
 
 .fan-select:focus {
     border-color: var(--border-focus);
-    outline: none;
+    outline: 3px solid var(--border-focus);
+    outline-offset: 1px;
 }
 
 .fan-select option {
@@ -881,7 +895,7 @@ h1, h2, h3, h4 {
     gap: 10px;
     align-items: flex-start;
     font-size: 14px;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     counter-increment: step-counter;
 }
 
