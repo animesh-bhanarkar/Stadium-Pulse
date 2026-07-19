@@ -24,7 +24,75 @@
 
     <main id="main-content" class="container" tabindex="-1">
         <div class="grid-2" style="grid-template-columns: 1fr;">
-            <!-- Main Friendly Fan Assistant Card -->
+
+            <!-- ══ Find Your Way — Live Routing Panel ══ -->
+            <section class="panel" aria-labelledby="routing-heading" style="margin-bottom: 0;">
+                <h2 id="routing-heading" class="panel-title">
+                    <span>🗺️ Find Your Way</span>
+                    <span class="badge-live" style="background: var(--accent-blue-glow); color: var(--accent-blue); border-color: var(--accent-blue);">Live Routing</span>
+                </h2>
+
+                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 15px;">
+                    Select your ticket zone and where you need to go. We'll find the least-crowded route in real time.
+                </p>
+
+                <form id="routing-form" novalidate>
+                    <!-- Zone selector -->
+                    <div class="form-group">
+                        <label class="form-label" for="zone-select">Your Ticket Zone</label>
+                        <select id="zone-select" class="fan-select" aria-required="true">
+                            <option value="">— Select your zone —</option>
+                            <option value="zone_a">Zone A — North Stands (Sec 101–115)</option>
+                            <option value="zone_b">Zone B — South Stands (Sec 130–145)</option>
+                            <option value="zone_c">Zone C — East Stands (Sec 116–129)</option>
+                            <option value="zone_d">Zone D — West Stands (Sec 146–160)</option>
+                        </select>
+                    </div>
+
+                    <!-- Destination type selector -->
+                    <div class="form-group">
+                        <label class="form-label" for="destination-select">Where do you need to go?</label>
+                        <select id="destination-select" class="fan-select" aria-required="true">
+                            <option value="">— Select a destination —</option>
+                            <option value="exit">🚪 Exit (Stadium Gate)</option>
+                            <option value="parking">🅿️ Parking Lot</option>
+                            <option value="transit">🚌 Public Transit Hub</option>
+                            <option value="medical">🏥 Medical Station</option>
+                        </select>
+                    </div>
+
+                    <!-- Wheelchair toggle -->
+                    <fieldset class="form-group" style="border: none; padding: 0;">
+                        <legend class="form-label">Wheelchair-accessible route needed?</legend>
+                        <div style="display: flex; gap: 12px; margin-top: 4px;">
+                            <label class="fan-radio-label">
+                                <input type="radio" name="wheelchair" id="wc-no" value="none" checked>
+                                <span>No</span>
+                            </label>
+                            <label class="fan-radio-label">
+                                <input type="radio" name="wheelchair" id="wc-yes" value="wheelchair">
+                                <span>Yes — wheelchair accessible</span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="btn" id="route-btn" style="margin-top: 8px;">
+                        <span id="route-btn-text">Get Directions</span>
+                    </button>
+                </form>
+
+                <!-- aria-live region: screen readers announce routing results -->
+                <div
+                    id="routing-result"
+                    role="region"
+                    aria-live="polite"
+                    aria-label="Routing result"
+                    aria-atomic="true"
+                    style="margin-top: 20px; min-height: 4px;"
+                ></div>
+            </section>
+
+            <!-- ══ Fan AI Chat Assistant ══ -->
             <section class="panel" aria-labelledby="assistant-heading">
                 <h2 id="assistant-heading" class="panel-title">
                     <span>Tournament Fan Assistant</span>

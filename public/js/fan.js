@@ -163,4 +163,142 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // ── Live Routing Logic ───────────────────────────────────────────────────
+    const routingForm = document.getElementById('routing-form');
+    const zoneSelect = document.getElementById('zone-select');
+    const destSelect = document.getElementById('destination-select');
+    const routingResult = document.getElementById('routing-result');
+    const routeBtnText = document.getElementById('route-btn-text');
+    const routeBtn = document.getElementById('route-btn');
+
+    // Hardcoded origin coordinates for the zones (inside/near MetLife Stadium)
+    const ZONE_COORDS = {
+        'zone_a': { lat: 40.8145, lng: -74.0745 }, // North Stands
+        'zone_b': { lat: 40.8125, lng: -74.0745 }, // South Stands
+        'zone_c': { lat: 40.8135, lng: -74.0725 }, // East Stands
+        'zone_d': { lat: 40.8135, lng: -74.0765 }  // West Stands
+    };
+
+    const DEST_ICONS = {
+        'exit': '🚪',
+        'accessible_exit': '♿',
+        'parking': '🅿️',
+        'transit': '🚌',
+        'medical': '🏥'
+    };
+
+    if (routingForm) {
+        routingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset state
+            routingResult.innerHTML = '';
+            
+            const zoneVal = zoneSelect.value;
+            const destVal = destSelect.value;
+            const mobilityVal = document.querySelector('input[name="wheelchair"]:checked').value;
+
+            // Validation
+            let errorMsg = '';
+            if (!zoneVal) errorMsg = 'Please select your ticket zone.';
+            else if (!destVal) errorMsg = 'Please select a destination.';
+
+            if (errorMsg) {
+                routingResult.innerHTML = `<div class="route-inline-error"><span>⚠️</span> ${errorMsg}</div>`;
+                return;
+            }
+
+            const coords = ZONE_COORDS[zoneVal];
+
+            // Show loading state
+            routeBtn.disabled = true;
+            routeBtnText.textContent = 'Finding route...';
+            routingResult.innerHTML = `
+                <div class="typing-indicator" aria-label="Calculating route..." style="margin: 0 auto; display: flex; justify-content: center; background: none; border: none;">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/route', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        destinationType: destVal,
+                        mobilityNeed: mobilityVal,
+                        originLat: coords.lat,
+                        originLng: coords.lng
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to calculate route.');
+                }
+
+                // Success rendering
+                const loc = data.chosenLocation;
+                const route = data.route;
+                const icon = DEST_ICONS[loc.type] || '📍';
+                const typeLabel = loc.type.replace('_', ' ');
+
+                let warningHtml = '';
+                if (data.warning) {
+                    warningHtml = `
+                        <div class="route-warning-banner">
+                            <span style="font-size: 16px;">ℹ️</span>
+                            <span>${data.warning}</span>
+                        </div>
+                    `;
+                }
+
+                const stepsHtml = route.steps.map(step => `<li>${step}</li>`).join('');
+
+                routingResult.innerHTML = `
+                    <div class="route-result-card">
+                        ${warningHtml}
+                        <div class="route-dest-header">
+                            <div class="route-dest-icon" aria-hidden="true">${icon}</div>
+                            <div>
+                                <div class="route-dest-name">${loc.name}</div>
+                                <div class="route-dest-type">${typeLabel}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="route-meta-row">
+                            <div class="route-meta-item">
+                                <span class="route-meta-label">Distance</span>
+                                <span class="route-meta-value">${route.distanceText}</span>
+                            </div>
+                            <div class="route-meta-item">
+                                <span class="route-meta-label">Est. Time</span>
+                                <span class="route-meta-value">${route.durationText}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="route-steps-heading">Walking Directions</div>
+                        <ul class="route-steps-list">
+                            ${stepsHtml}
+                        </ul>
+                    </div>
+                `;
+
+            } catch (err) {
+                console.error('Routing error:', err);
+                routingResult.innerHTML = `
+                    <div class="route-error-banner">
+                        <p>⚠️ We couldn't find a route right now. ${err.message !== 'Failed to calculate route.' ? err.message : ''}</p>
+                        <button type="button" onclick="document.getElementById('route-btn').click()">Try again</button>
+                    </div>
+                `;
+            } finally {
+                routeBtn.disabled = false;
+                routeBtnText.textContent = 'Get Directions';
+            }
+        });
+    }
 });
